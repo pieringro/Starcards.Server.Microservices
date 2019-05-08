@@ -7,3 +7,6 @@
 [submodule "CardService"]
 	path = CardService
 	url = https://github.com/pieringro/Starcards.Server.CardService.git
+[submodule "DeckDetailService"]
+	path = DeckDetailService
+	url = https://github.com/pieringro/Starcards.Server.DeckDetailService.git
