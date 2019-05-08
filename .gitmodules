@@ -1,0 +1,9 @@
+[submodule "Infrastructure/SimpleMongoDBWrapper"]
+	path = Infrastructure/SimpleMongoDBWrapper
+	url = https://github.com/pieringro/SimpleMongoDBWrapper.git
+[submodule "Infrastructure/SimpleAMQPWrapper"]
+	path = Infrastructure/SimpleAMQPWrapper
+	url = https://github.com/pieringro/SimpleAMQPClient.git
+[submodule "CardService"]
+	path = CardService
+	url = https://github.com/pieringro/Starcards.Server.CardService.git
