@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+
+    mongo:
+        container_name: mongo
+        image: mongo
+        volumes:
+            - mongodata:/data/db
+        environment:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: example
+        ports:
+          - 27017:27017
+          
+    baget:
+        container_name: baget
+        image: mybaget
+        volumes:
+            - ./baget/baget-data:/var/baget
+        ports:
+            - 5555:80
+        env_file:
+            - ./Infrastructure/baget/baget.env
+        command:
+            - ./Infrastructure/baget/compose.ps1
+            
+
+    cardservice:
+        container_name: cardservice
+        image: cardservice
+        links:
+            - baget:baget
+            - mongo:mongo
+
+volumes:
+    mongodata:
+
+
