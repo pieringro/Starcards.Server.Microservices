@@ -36,4 +36,8 @@ services:
 volumes:
     mongodata:
 
+networks:
+    default:
+        external:
+            name: starcards-network
 
