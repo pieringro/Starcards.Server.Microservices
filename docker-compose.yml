@@ -12,19 +12,18 @@ services:
           MONGO_INITDB_ROOT_PASSWORD: example
         ports:
           - 27017:27017
-          
+
     baget:
         container_name: baget
-        image: mybaget
+        image: loicsharma/baget
         volumes:
-            - ./baget/baget-data:/var/baget
+            - ./Infrastructure/baget/baget-data:/var/baget
         ports:
             - 5555:80
         env_file:
             - ./Infrastructure/baget/baget.env
         command:
-            - ./Infrastructure/baget/compose.ps1
-            
+            - ./Infrastructure/baget/dockerizer.ps1
 
     cardservice:
         container_name: cardservice
