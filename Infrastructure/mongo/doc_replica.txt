@@ -1,0 +1,55 @@
+
+docker network create my-mongo-cluster
+
+// avvio mongo containers in 3 bash. E' importante siano 3, altrimenti non funziona.
+// (probabilmente dipende dal quorum)
+docker run -p 30001:27017 --name mongo1 --net my-mongo-cluster mongo mongod --replSet my-replica
+docker run -p 30002:27017 --name mongo2 --net my-mongo-cluster mongo mongod --replSet my-replica
+docker run -p 30003:27017 --name mongo3 --net my-mongo-cluster mongo mongod --replSet my-replica
+
+ == // oppure crei un DockerFile con il CMD ["mongod", "--replSet", "my-replica"]
+ == // fai la build dell'image
+ == docker build . -t mymongo
+ == // quindi i 3 comandi diventano
+ == docker run -p 30001:27017 --name mongo1 --net my-mongo-cluster mymongo
+
+// entra nel primo con
+winpty docker exec -it mongo1 mongo
+// winpty perche' sei da windows
+// e vai con
+db = (new Mongo('localhost:27017')).getDB('test')
+ >>> test
+config={"_id":"my-replica","members":[{"_id":0,"host":"mongo1:27017"},{"_id":1,"host":"mongo2:27017"},{"_id":2,"host":"mongo3:27017"}]}
+rs.initiate(config)
+ >>> {
+ >>>    "ok" : 1,
+ >>>    "operationTime" : Timestamp(1559205003, 1),
+ >>>    "$clusterTime" : {
+ >>>            "clusterTime" : Timestamp(1559205003, 1),
+ >>>            "signature" : {
+ >>>                    "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+ >>>                    "keyId" : NumberLong(0)
+ >>>            }
+ >>>    }
+ >>> }
+ 
+// ora ti dovrebbe dare
+my-replica:SECONDARY>
+
+// prova a dare un invio vuoto, oppure un qualsiasi comando e dovrebbe cambiare in
+my-replica:PRIMARY>
+
+db.mycollection.insert( { hello:'world'})
+ >>> WriteResult({ "nInserted" : 1 })
+
+// ora ci si aspetta che anche sugli altri 2 replica ci sia il dato appena inserito
+// quindi sempre rimanendo collegato su questo container con il mongo client, 
+// puoi creare una nuova connessione all'altro container mongo2
+db2 = (new Mongo('mongo2:27017')).getDB('test')
+db2.mycollection.find()
+ >>> { "_id" : ObjectId("5cef994f247477334c7875c4"), "hello" : "world" }
+
+// (raggiungerai l'altro container mongo2 perchè hai settato all'inizio la network bridge my-mongo-cluster
+
+
+
