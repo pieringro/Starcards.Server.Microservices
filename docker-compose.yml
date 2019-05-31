@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.2'
 
 services:
 
@@ -65,4 +65,6 @@ volumes:
 
 networks:
     starcardsnet:
+        driver: overlay
+        attachable: true
 
