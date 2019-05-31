@@ -6,7 +6,7 @@ cd $(dirname "$0")
 
 docker stop nuget-server
 
-docker container prune
+docker container prune --force
 
 docker pull loicsharma/baget
 

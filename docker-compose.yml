@@ -2,41 +2,67 @@ version: '3.1'
 
 services:
 
-    mongo:
-        container_name: mongo
-        image: mongo
+    mongo1:
+        hostname: mongo1
+        container_name: localmongo1
+        image: mongo:4.0-xenial
+        networks:
+            - starcardsnet
         volumes:
             - mongodata:/data/db
-        environment:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: example
-        ports:
-          - 27017:27017
+        expose:
+            - 27017
+        restart: always
+        entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica" ]
 
-    baget:
-        container_name: baget
-        image: loicsharma/baget
+    mongo2:
+        hostname: mongo2
+        container_name: localmongo2
+        image: mongo:4.0-xenial
+        networks:
+            - starcardsnet
+        expose:
+            - 27017
+        restart: always
+        entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica" ]
+
+    mongo3:
+        hostname: mongo3
+        container_name: localmongo3
+        image: mongo:4.0-xenial
+        networks:
+            - starcardsnet
+        expose:
+            - 27017
+        restart: always
+        entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica" ]
+
+    mongosetup:
+        image: mongo
+        links: #inutile nel comando docker stack deploy
+            - mongo1:mongo1
+            - mongo2:mongo2
+            - mongo3:mongo3
         volumes:
-            - ./Infrastructure/baget/baget-data:/var/baget
-        ports:
-            - 5555:80
-        env_file:
-            - ./Infrastructure/baget/baget.env
-        command:
-            - ./Infrastructure/baget/dockerizer.ps1
+            - ./Infrastructure/mongo/scripts:/scripts
+        networks:
+            - starcardsnet
+        deploy:
+            restart_policy:
+                condition: none
+        command: /scripts/mongo-replica-setup.sh
 
     cardservice:
         container_name: cardservice
         image: cardservice
-        links:
-            - baget:baget
-            - mongo:mongo
+        networks:
+            - starcardsnet
+        deploy:
+            replicas: 2
 
 volumes:
     mongodata:
 
 networks:
-    default:
-        external:
-            name: starcards-network
+    starcardsnet:
 

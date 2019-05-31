@@ -1,13 +1,15 @@
 #!/bin/bash
 
-docker network rm starcardsnet
+stackName='stack'
+
+docker network rm ${stackName}_starcardsnet
 
 # reinit swarm as manager
 docker swarm leave --force
 docker swarm init
 
 # recreate starcardsnet
-docker network create -d overlay --subnet 10.0.1.0/24 --gateway 10.0.1.1 starcardsnet
+#docker network create -d overlay --subnet 10.0.1.0/24 --gateway 10.0.1.1 starcardsnet
 
 docker network rm starcardsbridge
 docker network create -d bridge --subnet 192.168.0.0/24 --gateway 192.168.0.1 starcardsbridge
@@ -22,7 +24,7 @@ docker network create -d bridge --subnet 192.168.0.0/24 --gateway 192.168.0.1 st
 
 
 # docker compose up in the swarm
-docker stack deploy -c docker-compose.yml stack
+docker stack deploy -c docker-compose.yml ${stackName}
 
 # after compose up in swarm
 # setup replicas for mongo
