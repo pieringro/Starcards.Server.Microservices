@@ -1,11 +1,12 @@
 #!/bin/bash
 
 apt-get update
-apt-get install -y iputils-ping
 
-MONGODB1=`ping -c 1 mongo1 | head -1  | cut -d "(" -f 2 | cut -d ")" -f 1`
-MONGODB2=`ping -c 1 mongo2 | head -1  | cut -d "(" -f 2 | cut -d ")" -f 1`
-MONGODB3=`ping -c 1 mongo3 | head -1  | cut -d "(" -f 2 | cut -d ")" -f 1`
+apt-get install -y dnsutils
+MONGODB1=`dig +short mongo1`
+MONGODB2=`dig +short mongo2`
+MONGODB3=`dig +short mongo3`
+
 
 echo "**********************************************" ${MONGODB1}
 echo "Waiting for startup.."
