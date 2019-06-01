@@ -3,6 +3,9 @@
 # dockerization of baget
 ./Infrastructure/baget/dockerizer.sh
 
-# build of CardService image
+# building MyMongo image (custom image of mongodb)
+./Infrastructure/mongo/docker-build.sh
+
+# building CardService image
 ./CardService/CardService/docker-build.sh
 

@@ -1,6 +1,8 @@
 # Pull base image.
 FROM mongo
 
+RUN apt-get update && apt-get install -y dnsutils
+
 # Define mountable directories.
 VOLUME ["/data/db"]
 
@@ -8,9 +10,7 @@ VOLUME ["/data/db"]
 WORKDIR /data
 
 # Define default command.
-# CMD ["mongod"]
-# Custom command for replSet
-CMD ["mongod", "--replSet", "my-replica"]
+CMD ["mongod"]
 
 
 # Expose ports.

@@ -38,11 +38,7 @@ services:
         entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica" ]
 
     mongosetup:
-        image: mongo
-        links: #inutile nel comando docker stack deploy
-            - mongo1:mongo1
-            - mongo2:mongo2
-            - mongo3:mongo3
+        image: mymongo
         volumes:
             - ./Infrastructure/mongo/scripts:/scripts
         networks:
