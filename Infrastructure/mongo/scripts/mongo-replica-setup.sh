@@ -1,15 +1,19 @@
 #!/bin/bash
 
 apt-get update
-
 apt-get install -y dnsutils
-MONGODB1=`dig +short mongo1`
-MONGODB2=`dig +short mongo2`
-MONGODB3=`dig +short mongo3`
 
+echo "Waiting mongo instances.."
+while [ -z "$MONGODB1" ] || [ -z "$MONGODB2" ] || [ -z "$MONGODB3" ] ; do
+    MONGODB1=`dig +short mongo1`
+    MONGODB2=`dig +short mongo2`
+    MONGODB3=`dig +short mongo3`
+    printf '.'
+    sleep 1
+done
+echo "Mongo instances ready!"
 
-echo "**********************************************" ${MONGODB1}
-echo "Waiting for startup.."
+echo ${MONGODB1} " Waiting for startup.."
 until curl http://${MONGODB1}:28017/serverStatus\?text\=1 2>&1 | grep uptime | head -1; do
   printf '.'
   sleep 1
@@ -47,6 +51,22 @@ rs.initiate(cfg, { force: true });
 rs.reconfig(cfg, { force: true });
 rs.slaveOk();
 db.getMongo().setReadPref('nearest');
-db.getMongo().setSlaveOk(); 
+db.getMongo().setSlaveOk();
 EOF
 
+sleep 30
+
+mongo --host ${MONGODB1}:27017 <<EOF
+use admin;
+if(db.system.users.findOne({user:'root'}) == null) {
+    print("Creating user root...");
+    db.createUser({
+        user: 'root',
+        pwd: 'root',
+        roles: [{ role: 'userAdminAnyDatabase', db:'admin'}]
+    });
+    print("... Done.");
+} else {
+    print("User root already exists.");
+}
+EOF
