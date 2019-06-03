@@ -24,8 +24,8 @@ dotnet nuget delete -s http://localhost:5555/v3/index.json --non-interactive -k 
 
 dotnet nuget push -s http://localhost:5555/v3/index.json -k NUGET-SERVER-API-KEY "$(pwd)/SimpleMongoDBWrapper.1.0.0.nupkg"
 
+echo "!!! End Baget: dockerizer.sh !!!"
 echo "Press enter to continue"
 read
 read
 
-echo "!!! End Baget: dockerizer.sh !!!"
