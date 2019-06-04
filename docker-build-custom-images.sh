@@ -9,3 +9,5 @@
 # building CardService image
 ./CardService/CardService/docker-build.sh
 
+# building MyRabbitMQ image
+./Infrastructure/rabbitmq/docker-build.sh
