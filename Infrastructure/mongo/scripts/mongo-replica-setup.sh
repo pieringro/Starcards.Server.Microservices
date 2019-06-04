@@ -13,18 +13,25 @@ while [ -z "$MONGODB1" ] || [ -z "$MONGODB2" ] || [ -z "$MONGODB3" ] ; do
 done
 echo "Mongo instances ready!"
 
-echo ${MONGODB1} " Waiting for startup.."
-until curl http://${MONGODB1}:28017/serverStatus\?text\=1 2>&1 | grep uptime | head -1; do
-  printf '.'
-  sleep 1
+
+for mongoInstance in $MONGODB1 $MONGODB2 $MONGODB3
+do
+    echo ${mongoInstance} " Waiting for startup.."
+    until curl http://${mongoInstance}:28017/serverStatus\?text\=1 2>&1 | grep uptime | head -1; do
+    printf '.'
+    sleep 1
+    done
+
+    echo curl http://${mongoInstance}:28017/serverStatus\?text\=1 2>&1 | grep uptime | head -1
+    echo ${mongoInstance} "Started.."
 done
 
-echo curl http://${MONGODB1}:28017/serverStatus\?text\=1 2>&1 | grep uptime | head -1
-echo "Started.."
 
 
 echo SETUP.sh time now: `date +"%T" `
 mongo --host ${MONGODB1}:27017 <<EOF
+print(">>>>>>>>> rs.status()");
+rs.status();
 var cfg = {
     "_id": "my-replica",
     "version": 1,
@@ -47,11 +54,19 @@ var cfg = {
         }
     ],settings: {chainingAllowed: true}
 };
+print(">>>>>>>>> rs.initiate(cfg, force)");
 rs.initiate(cfg, { force: true });
+print(">>>>> rs.reconfig(cfg, force)");
 rs.reconfig(cfg, { force: true });
+print(">>>>>>>>> rs.slaveOk()");
 rs.slaveOk();
+print(">>>>>>>>> db.getMongo().setReadPref('nearest')");
 db.getMongo().setReadPref('nearest');
+print(">>>>>>>>> db.getMongo().setSlaveOk()");
 db.getMongo().setSlaveOk();
+
+print(">>>>>>>>> rs.status()");
+rs.status();
 EOF
 
 sleep 30
