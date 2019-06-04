@@ -55,14 +55,21 @@ services:
             - ./Infrastructure/mongo/scripts:/scripts
         networks:
             - starcardsnet
-        # depends_on:
-        #     - mongo1
-        #     - mongo2
-        #     - mongo3
         deploy:
             restart_policy:
                 condition: on-failure
         command: /scripts/mongo-replica-setup.sh
+
+    rabbitmq:
+        image: myrabbitmq
+        container_name: rabbitmq
+        volumes:
+            - ./Infrastructure/rabbitmq/scripts:/scripts
+        ports:
+            - 5672:5672
+            - 15672:15672
+        restart: always
+        command: /scripts/rabbitmq-setup.sh
 
     cardservice:
         container_name: cardservice
