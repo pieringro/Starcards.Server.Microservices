@@ -64,11 +64,15 @@ services:
         image: myrabbitmq
         container_name: rabbitmq
         volumes:
+            - rabbitmqdata:/var/lib/rabbitmq
             - ./Infrastructure/rabbitmq/scripts:/scripts
         ports:
             - 5672:5672
             - 15672:15672
         restart: always
+        environment:
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
         command: /scripts/rabbitmq-setup.sh
 
     cardservice:
@@ -87,6 +91,7 @@ services:
 
 volumes:
     mongodata:
+    rabbitmqdata:
 
 networks:
     starcardsnet:

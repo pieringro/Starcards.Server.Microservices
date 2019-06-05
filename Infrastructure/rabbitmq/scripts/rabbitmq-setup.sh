@@ -12,3 +12,6 @@ curl -i -u guest:guest -H "content-type:application/json" \
  http://localhost:15672/api/exchanges/%2f/my-new-exchange
 
 echo "!!! End RabbitMQ: rabbitmq-setup.sh !!!"
+
+# keep running script and container
+tail -f /dev/null
