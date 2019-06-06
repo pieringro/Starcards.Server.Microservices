@@ -13,8 +13,6 @@ services:
         expose:
             - 27017
             - 28017
-        depends_on:
-            - mongosetup
         ports:
             - 30000:27017
         restart: always
@@ -29,8 +27,6 @@ services:
         expose:
             - 27017
             - 28017
-        depends_on:
-            - mongosetup
         restart: always
         entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica" ]
 
@@ -43,8 +39,6 @@ services:
         expose:
             - 27017
             - 28017
-        depends_on:
-            - mongosetup
         restart: always
         entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "my-replica" ]
 
